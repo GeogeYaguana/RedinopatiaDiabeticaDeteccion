@@ -5,7 +5,7 @@ import numpy as np
 import random
 from PIL import Image
 from PIL import UnidentifiedImageError
-
+import os
 # Analisis Explorativo de Datos
 df = pd.read_csv('ejemplos/labels.csv')
 print(df.head())
@@ -77,7 +77,6 @@ def analisisBrilloIntensidadRGB():
         plt.legend()
         plt.show()
 
-analisisBrilloIntensidadRGB()
 # Visualizar los resultados
 def analisisBrilloLevelRedinopatia():
     brightness_stats = {}
@@ -100,3 +99,102 @@ def analisisBrilloLevelRedinopatia():
     plt.ylabel('Brillo Promedio')
     plt.show()
 
+def summarize_rgb_intensities(labels_csv_path, images_folder):
+    """
+    Resume las distribuciones de intensidades RGB por nivel de retinopatía.
+
+    Parámetros:
+    - labels_csv_path: Ruta al archivo CSV con las etiquetas (debe contener columnas 'image' y 'level').
+    - images_folder: Ruta a la carpeta que contiene las imágenes.
+
+    Retorna:
+    - DataFrame con estadísticas resumidas para cada nivel y cada canal de color.
+    """
+    # Cargar las etiquetas
+    df = pd.read_csv(labels_csv_path)
+    print(df.columns)
+        
+    # Inicializar una lista para almacenar los resúmenes
+    summaries = []
+    
+    # Iterar sobre cada fila del DataFrame
+    for index, row in df.iterrows():
+        img_name = row['image']
+        level = row['level']
+        img_path = os.path.join(images_folder, f"{img_name}.jpeg")
+        
+        # Abrir la imagen y convertir a RGB
+        try:
+            img = Image.open(img_path).convert('RGB')
+            img_arr = np.array(img)
+        except Exception as e:
+            print(f"Error al abrir la imagen {img_name}: {e}")
+            continue  # Saltar esta imagen y continuar
+        
+        # Calcular estadísticas para cada canal
+        r = img_arr[:, :, 0].flatten()
+        g = img_arr[:, :, 1].flatten()
+        b = img_arr[:, :, 2].flatten()
+        
+        summary = {
+            'level': level,
+            'r_mean': r.mean(),
+            'r_median': np.median(r),
+            'r_std': r.std(),
+            'r_min': r.min(),
+            'r_max': r.max(),
+            'r_25th': np.percentile(r, 25),
+            'r_75th': np.percentile(r, 75),
+            
+            'g_mean': g.mean(),
+            'g_median': np.median(g),
+            'g_std': g.std(),
+            'g_min': g.min(),
+            'g_max': g.max(),
+            'g_25th': np.percentile(g, 25),
+            'g_75th': np.percentile(g, 75),
+            
+            'b_mean': b.mean(),
+            'b_median': np.median(b),
+            'b_std': b.std(),
+            'b_min': b.min(),
+            'b_max': b.max(),
+            'b_25th': np.percentile(b, 25),
+            'b_75th': np.percentile(b, 75),
+        }
+        
+        summaries.append(summary)
+    
+    # Convertir la lista de resúmenes en un DataFrame
+    summary_df = pd.DataFrame(summaries)
+    
+    # Agrupar por nivel y calcular las estadísticas agregadas (opcional)
+    grouped_summary = summary_df.groupby('level').agg({
+        'r_mean': 'mean',
+        'r_median': 'mean',
+        'r_std': 'mean',
+        'r_min': 'min',
+        'r_max': 'max',
+        'r_25th': 'mean',
+        'r_75th': 'mean',
+        
+        'g_mean': 'mean',
+        'g_median': 'mean',
+        'g_std': 'mean',
+        'g_min': 'min',
+        'g_max': 'max',
+        'g_25th': 'mean',
+        'g_75th': 'mean',
+        
+        'b_mean': 'mean',
+        'b_median': 'mean',
+        'b_std': 'mean',
+        'b_min': 'min',
+        'b_max': 'max',
+        'b_25th': 'mean',
+        'b_75th': 'mean',
+    }).reset_index()
+    
+    return grouped_summary
+result = summarize_rgb_intensities('ejemplos/labels.csv', 'ejemplos')
+print(result)
