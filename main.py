@@ -77,21 +77,20 @@ def analisisBrilloIntensidadRGB():
         plt.legend()
         plt.show()
 
-# Agrupar por nivel y calcular el brillo promedio
-brightness_stats = {}
-
-for level in df['level'].unique():
-    subset = df[df['level'] == level]
-    brightness = []
-    for img_name in subset['image']:
-        img_path = f'ejemplos/{img_name}.jpeg'
-        img = Image.open(img_path).convert('RGB')
-        img_arr = np.array(img)
-        brightness.append(img_arr.mean())
-    brightness_stats[level] = np.mean(brightness)
-
+analisisBrilloIntensidadRGB()
 # Visualizar los resultados
 def analisisBrilloLevelRedinopatia():
+    brightness_stats = {}
+    for level in df['level'].unique():
+        subset = df[df['level'] == level]
+        brightness = []
+        for img_name in subset['image']:
+            img_path = f'ejemplos/{img_name}.jpeg'
+            img = Image.open(img_path).convert('RGB')
+            img_arr = np.array(img)
+            brightness.append(img_arr.mean())
+        brightness_stats[level] = np.mean(brightness)
+
     levels = list(brightness_stats.keys())
     avg_brightness = list(brightness_stats.values())
 
