@@ -1,0 +1,44 @@
+# Ignorar archivos generados por el sistema operativo
+.DS_Store
+Thumbs.db
+
+# Ignorar archivos de configuración específicos del entorno
+.env
+*.local
+
+# Ignorar dependencias
+node_modules/
+vendor/
+
+# Ignorar archivos de compilación o generados
+dist/
+build/
+*.class
+*.pyc
+*.pyo
+*.log
+
+# Ignorar IDEs y editores
+.vscode/
+.idea/
+*.swp
+
+# Ignorar bases de datos locales
+*.sqlite3
+*.db
+
+# Ignorar carpetas de prueba o cobertura
+coverage/
+*.lcov
+
+# Ignorar archivos temporales
+*.tmp
+*.bak
+*.orig
+*.sass-cache
+*.cache
+
+# Ignorar archivos de empaquetado
+*.zip
+*.tar.gz
+*.rar
