@@ -5,6 +5,7 @@ Thumbs.db
 # Ignorar archivos de configuración específicos del entorno
 .env
 *.local
+venv/
 
 # Ignorar dependencias
 node_modules/
